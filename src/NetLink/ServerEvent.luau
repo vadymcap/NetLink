@@ -1,9 +1,17 @@
+--!strict
+--[=[
+	@class ServerEvent
+	Handles server-side event batching and dispatching.
+	
+	@private
+]=]
+
 local RunService = game:GetService("RunService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local Spawn = require(script.Parent.Parent.Spawn)
+local Spawn = require(script.Parent.Internal.Spawn)
 
-local Remote = ReplicatedStorage:WaitForChild("RedEvent") :: RemoteEvent
+local Remote = ReplicatedStorage:WaitForChild("NetLinkEvent") :: RemoteEvent
 
 type CallList = { { any } }
 type EventMap = { [string]: { { any } } }
@@ -11,7 +19,15 @@ type EventMap = { [string]: { { any } } }
 local ListenerMap = {} :: { [string]: (player: Player, ...any) -> () }
 local OutgoingMap = {} :: { [Player]: { Fire: EventMap?, Call: CallList? } }
 
-local getOutboundMap = function(player: Player, kind: "Fire" | "Call")
+--[=[
+	Retrieves or creates an outbound map for a player.
+	
+	@private
+	@param player Player
+	@param kind "Fire" | "Call"
+	@return EventMap | CallList
+]=]
+local function getOutboundMap(player: Player, kind: "Fire"): EventMap
 	local map = OutgoingMap[player]
 	if not map then
 		map = {}
@@ -22,11 +38,17 @@ local getOutboundMap = function(player: Player, kind: "Fire" | "Call")
 	map[kind] = specific
 
 	return specific
-end :: ((player: Player, kind: "Fire") -> EventMap) & ((player: Player, kind: "Call") -> CallList)
+end
 
---#region Inbound traffic
-local function handleIncomingFire(player: Player, fireSection: EventMap): ()
-	debug.profilebegin("Red.ServerEvent.Start.MultipleFire")
+--[=[
+	Handles incoming Fire events from clients.
+	
+	@private
+	@param player Player
+	@param fireSection EventMap
+]=]
+local function handleIncomingFire(player: Player, fireSection: EventMap)
+	debug.profilebegin("NetLink.ServerEvent.MultipleFire")
 
 	for eventId: string, callList: CallList in fireSection do
 		local callback = ListenerMap[eventId]
@@ -35,25 +57,32 @@ local function handleIncomingFire(player: Player, fireSection: EventMap): ()
 			continue
 		end
 
-		for _: number, call: { any } in callList do
-			Spawn(callback, player, unpack(call))
+		for _, call: { any } in callList do
+			Spawn(callback, player, table.unpack(call))
 		end
 	end
 
 	debug.profileend()
 end
 
-local function handleIncomingCall(player: Player, callSection: EventMap): ()
-	debug.profilebegin("Red.ServerEvent.Start.Call")
+--[=[
+	Handles incoming Call events from clients.
+	
+	@private
+	@param player Player
+	@param callSection EventMap
+]=]
+local function handleIncomingCall(player: Player, callSection: EventMap)
+	debug.profilebegin("NetLink.ServerEvent.Call")
 
-	local function noListener(callList: CallList): ()
+	local function noListener(callList: CallList)
 		local map = getOutboundMap(player, "Call")
 
-		for _: number, call: { any } in callList do
+		for _, call: { any } in callList do
 			local callId: string = call[1]
 			local payload: { any } = {
 				callId,
-				false, --> success
+				false,
 				"Event has no listener.",
 			}
 
@@ -69,15 +98,15 @@ local function handleIncomingCall(player: Player, callSection: EventMap): ()
 			continue
 		end
 
-		for _: number, call: { any } in callList do
+		for _, call: { any } in callList do
 			Spawn(function()
 				local callId: string = call[1]
 				local result: { any } = {
 					callId,
-					pcall(callback, player, unpack(call, 2)), --> success, return data...
+					pcall(callback, player, table.unpack(call, 2)),
 				}
 
-				local map = getOutboundMap(player, "Call")
+				local map = getOutboundMap(player, "Call") :: any
 				table.insert(map, result)
 			end)
 		end
@@ -86,8 +115,16 @@ local function handleIncomingCall(player: Player, callSection: EventMap): ()
 	debug.profileend()
 end
 
-local function OnServerEvent(player: Player, fireSection: EventMap?, callSection: EventMap?): ()
-	debug.profilebegin("Red.ServerEvent.Start")
+--[=[
+	Main handler for incoming events from clients.
+	
+	@private
+	@param player Player
+	@param fireSection EventMap?
+	@param callSection EventMap?
+]=]
+local function OnServerEvent(player: Player, fireSection: EventMap?, callSection: EventMap?)
+	debug.profilebegin("NetLink.ServerEvent.Start")
 
 	if fireSection then
 		handleIncomingFire(player, fireSection)
@@ -99,11 +136,14 @@ local function OnServerEvent(player: Player, fireSection: EventMap?, callSection
 
 	debug.profileend()
 end
---#endregion
 
---#region Outbound traffic
-local function handleOutgoing(): ()
-	debug.profilebegin("Red.ServerEvent.Outgoing")
+--[=[
+	Processes and sends all queued outgoing events.
+	
+	@private
+]=]
+local function handleOutgoing()
+	debug.profilebegin("NetLink.ServerEvent.Outgoing")
 
 	for player, outbound in OutgoingMap do
 		Remote:FireClient(player, outbound.Fire, outbound.Call)
@@ -114,7 +154,14 @@ local function handleOutgoing(): ()
 	debug.profileend()
 end
 
-local function Fire(player: Player, eventId: string, args: { any }): ()
+--[=[
+	Queues an event to be sent to a player (batched).
+	
+	@param player Player
+	@param eventId string
+	@param args {any}
+]=]
+local function Fire(player: Player, eventId: string, args: { any })
 	local map = getOutboundMap(player, "Fire")
 	if not map[eventId] then
 		map[eventId] = {}
@@ -123,17 +170,32 @@ local function Fire(player: Player, eventId: string, args: { any }): ()
 	table.insert(map[eventId], args)
 end
 
-local function FireNow(player: Player, eventId: string, args: { any }): ()
+--[=[
+	Sends an event to a player immediately (unbatched).
+	
+	@param player Player
+	@param eventId string
+	@param args {any}
+]=]
+local function FireNow(player: Player, eventId: string, args: { any })
 	Remote:FireClient(player, { [eventId] = { args } })
 end
---#endregion
 
-local function Listen(eventId: string, callback: (player: Player, ...any) -> ()): ()
+--[=[
+	Registers a listener for an event.
+	
+	@param eventId string
+	@param callback (player: Player, ...any) -> ()
+]=]
+local function Listen(eventId: string, callback: (player: Player, ...any) -> ())
 	ListenerMap[eventId] = callback
 end
 
-local function Start(): ()
-	debug.setmemorycategory("Red.ServerEvent.Start")
+--[=[
+	Initializes the server event system.
+]=]
+local function Start()
+	debug.setmemorycategory("NetLink.ServerEvent.Start")
 
 	Remote.OnServerEvent:Connect(OnServerEvent)
 	RunService.Heartbeat:Connect(handleOutgoing)
@@ -143,6 +205,5 @@ return {
 	Fire = Fire,
 	FireNow = FireNow,
 	Listen = Listen,
-
 	Start = Start,
 }

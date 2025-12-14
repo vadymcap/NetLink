@@ -1,15 +1,21 @@
+--!strict
+--[=[
+	@class ClientEvent
+	Handles client-side event batching and dispatching.
+	
+	@private
+]=]
+
 local RunService = game:GetService("RunService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
--- Modules --
 local Event = require(script.Parent.Event)
-local Spawn = require(script.Parent.Parent.Spawn)
+local Spawn = require(script.Parent.Internal.Spawn)
+local Promise = require(script.Parent.Promise)
 
--- Packages --
-local Promise = require(ReplicatedStorage.Packages.Promise)
 type Promise<T...> = Promise.Promise<T...>
 
-local Remote = ReplicatedStorage:WaitForChild("RedEvent") :: RemoteEvent
+local Remote = ReplicatedStorage:WaitForChild("NetLinkEvent") :: RemoteEvent
 
 type callback = (...any) -> ()
 type EventMap = { [string]: { { any } } }
@@ -24,14 +30,19 @@ local CallerMap = {} :: {
 }
 
 local FIRE_MAP: EventMap = {}
-local FIRE_COUNT = 0 -- NOTE: Can technically be a boolean
+local FIRE_COUNT = 0
 
 local CALL_MAP: EventMap = {}
 local CALL_COUNT = 0
 
---#region Inbound traffic
-local function handleIncomingFire(fireSection: EventMap): ()
-	debug.profilebegin("Red.ClientEvent.Start.Fire")
+--[=[
+	Handles incoming Fire events from server.
+	
+	@private
+	@param fireSection EventMap
+]=]
+local function handleIncomingFire(fireSection: EventMap)
+	debug.profilebegin("NetLink.ClientEvent.Fire")
 
 	for eventId: string, callList: { { any } } in fireSection do
 		local callback = ListenerMap[eventId]
@@ -40,8 +51,8 @@ local function handleIncomingFire(fireSection: EventMap): ()
 			continue
 		end
 
-		for _: number, call: { any } in callList do
-			Spawn(callback, unpack(call))
+		for _, call: { any } in callList do
+			Spawn(callback, table.unpack(call))
 		end
 	end
 
@@ -49,14 +60,15 @@ local function handleIncomingFire(fireSection: EventMap): ()
 end
 
 --[=[
-	Handles the resolution (or rejection) of promises returned by `:Call()` upon receiving a response from the server.
-
-	@param callSection { { any } } -- An array of responses. Responses: { [1]: string (callId), [2]: boolean (success), ... (payload) }
+	Handles resolution or rejection of Call promises.
+	
+	@private
+	@param callSection {{any}}
 ]=]
-local function handleCallResumption(callSection: { { any } }): ()
-	debug.profilebegin("Red.ClientEvent.Start.Call")
+local function handleCallResumption(callSection: { { any } })
+	debug.profilebegin("NetLink.ClientEvent.Call")
 
-	for _: number, call: { any } in callSection do
+	for _, call: { any } in callSection do
 		local id: string = call[1]
 		local success: boolean = call[2]
 
@@ -66,9 +78,9 @@ local function handleCallResumption(callSection: { { any } }): ()
 		end
 
 		if success then
-			caller.Resolve(unpack(call, 3))
+			caller.Resolve(table.unpack(call, 3))
 		else
-			caller.Reject(unpack(call, 3))
+			caller.Reject(table.unpack(call, 3))
 		end
 
 		CallerMap[id] = nil
@@ -77,8 +89,15 @@ local function handleCallResumption(callSection: { { any } }): ()
 	debug.profileend()
 end
 
-local function OnClientEvent(fireSection: EventMap?, callSection: { { any } }?): ()
-	debug.profilebegin("Red.ClientEvent.Start")
+--[=[
+	Main handler for incoming events from server.
+	
+	@private
+	@param fireSection EventMap?
+	@param callSection {{any}}?
+]=]
+local function OnClientEvent(fireSection: EventMap?, callSection: { { any } }?)
+	debug.profilebegin("NetLink.ClientEvent.Start")
 
 	if fireSection then
 		handleIncomingFire(fireSection)
@@ -90,11 +109,14 @@ local function OnClientEvent(fireSection: EventMap?, callSection: { { any } }?):
 
 	debug.profileend()
 end
---#endregion
 
---#region Outbound traffic
-local function handleOutgoing(): ()
-	debug.profilebegin("Red.ClientEvent.Outgoing")
+--[=[
+	Processes and sends all queued outgoing events.
+	
+	@private
+]=]
+local function handleOutgoing()
+	debug.profilebegin("NetLink.ClientEvent.Outgoing")
 
 	if CALL_COUNT ~= 0 or FIRE_COUNT ~= 0 then
 		Remote:FireServer(FIRE_MAP, CALL_MAP)
@@ -108,7 +130,13 @@ local function handleOutgoing(): ()
 	debug.profileend()
 end
 
-local function Fire(eventId: string, args: { any }): ()
+--[=[
+	Queues an event to be sent to server (batched).
+	
+	@param eventId string
+	@param args {any}
+]=]
+local function Fire(eventId: string, args: { any })
 	FIRE_COUNT += 1
 
 	if not FIRE_MAP[eventId] then
@@ -118,14 +146,27 @@ local function Fire(eventId: string, args: { any }): ()
 	table.insert(FIRE_MAP[eventId], args)
 end
 
-local function FireNow(eventId: string, args: { any }): ()
+--[=[
+	Sends an event to server immediately (unbatched).
+	
+	@param eventId string
+	@param args {any}
+]=]
+local function FireNow(eventId: string, args: { any })
 	Remote:FireServer({ [eventId] = { args } })
 end
 
+--[=[
+	Calls a server function and returns a Promise.
+	
+	@param eventId string
+	@param args {any}
+	@return Promise<...any>
+]=]
 local function Call(eventId: string, args: { any }): Promise<...any>
 	CALL_COUNT += 1
 
-	return Promise.new(function(resolve, reject): ()
+	return Promise.new(function(resolve, reject)
 		local callId = Event.Unique()
 
 		if not CALL_MAP[eventId] then
@@ -141,14 +182,22 @@ local function Call(eventId: string, args: { any }): Promise<...any>
 		}
 	end)
 end
---#endregion
 
-local function Listen(eventId: string, callback: (...any) -> ()): ()
+--[=[
+	Registers a listener for an event.
+	
+	@param eventId string
+	@param callback (...any) -> ()
+]=]
+local function Listen(eventId: string, callback: (...any) -> ())
 	ListenerMap[eventId] = callback
 end
 
-local function Start(): ()
-	debug.setmemorycategory("Red.ClientEvent.Start")
+--[=[
+	Initializes the client event system.
+]=]
+local function Start()
+	debug.setmemorycategory("NetLink.ClientEvent.Start")
 
 	Remote.OnClientEvent:Connect(OnClientEvent)
 	RunService.Heartbeat:Connect(handleOutgoing)
@@ -159,6 +208,5 @@ return {
 	Fire = Fire,
 	FireNow = FireNow,
 	Listen = Listen,
-
 	Start = Start,
 }
