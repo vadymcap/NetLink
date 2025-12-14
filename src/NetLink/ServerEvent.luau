@@ -214,7 +214,7 @@ local function Start()
 	debug.setmemorycategory("NetLink.ServerEvent.Start")
 
 	Remote.OnServerEvent:Connect(OnServerEvent)
-	UnreliableRemote.OnClientEvent:Connect(OnServerEvent)
+	UnreliableRemote.OnServerEvent:Connect(OnServerEvent)
 	RunService.Heartbeat:Connect(handleOutgoing)
 end
 

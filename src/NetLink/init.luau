@@ -12,13 +12,6 @@ local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local Promise = require(script.Promise)
-local Event = require(script.Event)
-local ServerEvent = require(script.ServerEvent)
-local ClientEvent = require(script.ClientEvent)
-
-type Promise<T...> = Promise.PromiseType<T...>
-
 local ReliableRemote = ReplicatedStorage:FindFirstChild("NetLinkEvent") :: RemoteEvent?
 local UnreliableRemote = ReplicatedStorage:FindFirstChild("NetLinkEventUnreliable") :: UnreliableRemoteEvent?
 
@@ -37,6 +30,14 @@ elseif not ReliableRemote then
 end
 
 local cachedEventIds: { [string]: string } = {}
+
+
+local Promise = require(script.Promise)
+local Event = require(script.Event)
+local ServerEvent = require(script.ServerEvent)
+local ClientEvent = require(script.ClientEvent)
+
+type Promise<T...> = Promise.PromiseType<T...>
 
 --[=[
 	Gets a cached event ID if available.
