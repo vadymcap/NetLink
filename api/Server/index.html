@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en" dir="ltr" class="plugin-moonwave plugin-id-moonwave" data-has-hydrated="false">
+<head>
+<meta charset="UTF-8">
+<meta name="generator" content="Docusaurus v3.7.0">
+<title data-rh="true">Server | NetLink</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://AuthorName.github.io/NetLink/api/Server"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docusaurus_tag" content="default"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docsearch:docusaurus_tag" content="default"><meta data-rh="true" property="og:title" content="Server | NetLink"><meta data-rh="true" name="description" content="Server-side namespace for handling client communication."><meta data-rh="true" property="og:description" content="Server-side namespace for handling client communication."><link data-rh="true" rel="canonical" href="https://AuthorName.github.io/NetLink/api/Server"><link data-rh="true" rel="alternate" href="https://AuthorName.github.io/NetLink/api/Server" hreflang="en"><link data-rh="true" rel="alternate" href="https://AuthorName.github.io/NetLink/api/Server" hreflang="x-default"><link rel="stylesheet" href="/NetLink/assets/css/styles.b9f2c64d.css">
+<script src="/NetLink/assets/js/runtime~main.9a7e6f7b.js" defer="defer"></script>
+<script src="/NetLink/assets/js/main.f32ffa8f.js" defer="defer"></script>
+</head>
+<body class="navigation-with-keyboard">
+<script>!function(){function t(t){document.documentElement.setAttribute("data-theme",t)}var e=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();null!==e?t(e):window.matchMedia("(prefers-color-scheme: dark)").matches?t("dark"):(window.matchMedia("(prefers-color-scheme: light)").matches,t("light"))}(),function(){try{const c=new URLSearchParams(window.location.search).entries();for(var[t,e]of c)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id="__docusaurus"><div role="region" aria-label="Skip to main content"><a class="skipToContent_fXgn" href="#__docusaurus_skipToContent_fallback">Skip to main content</a></div><nav aria-label="Main" class="navbar navbar--fixed-top"><div class="navbar__inner"><div class="navbar__items"><button aria-label="Toggle navigation bar" aria-expanded="false" class="navbar__toggle clean-btn" type="button"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/NetLink/"><b class="navbar__title text--truncate">NetLink</b></a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/NetLink/api/">API</a></div><div class="navbar__items navbar__items--right"><a href="https://discord.gg/gQRfWpTsEE" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link">Discord<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_nPIU"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a><a href="https://github.com/vadymcap/NetLink" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_nPIU"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type="button" disabled="" title="Switch between dark and light mode (currently light mode)" aria-label="Switch between dark and light mode (currently light mode)" aria-live="polite" aria-pressed="false"><svg viewBox="0 0 24 24" width="24" height="24" class="lightToggleIcon_pyhR"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" class="darkToggleIcon_wfgR"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg></button></div><div class="navbarSearchContainer_Bca1"><div class="navbar__search"><span aria-label="expand searchbar" role="button" class="search-icon" tabindex="0"></span><input id="search_input_react" type="search" placeholder="Loading..." aria-label="Search" class="navbar__search-input search-bar" disabled=""></div></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="main-wrapper mainWrapper_z2l0 docPageContainer_wNNk"><div class="docPage_Dpn1"><div class="docSidebarContainer_o_re"><div class="sidebar_njMd"><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/NetLink/api/NetLink">​Net​Link</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" href="/NetLink/api/Server">​Server</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/NetLink/api/Client">​Client</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/NetLink/api/RateLimit">​Rate​Limit</a></li></ul></nav></div></div><main class="docMainContainer_HJE1"><div class="container padding-vert--lg"><div class="row"><div class="col docItemCol_MU3C"><div class="docItemContainer_Wv98"><article><div class="member_J0w1 markdown"><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_oUs_"><button type="button" class="clean-btn tocCollapsibleButton_TO0P">On this page</button></div><header><h1 class="docTitle_mZRt" style="text-decoration:none"><span style="display:inline-block">Server</span></h1><div class="luaClassTags_EipM"></div><div>
+<p>Server-side namespace for handling client communication.</p>
+</div></header><h2 class="anchor anchorWithStickyNavbar_LWe7" id="functions">Functions<a href="#functions" class="hash-link" aria-label="Direct link to Functions" title="Direct link to Functions">​</a></h2><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="Fire"><code style="text-decoration:none">Fire</code><a href="#Fire" class="hash-link" aria-label="Direct link to Fire" title="Direct link to Fire">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/vadymcap/NetLink/blob/main/src/NetLink/init.luau#L116"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Server<!-- -->:</code><code class="green_DgR4">Fire</code><code>(</code><div class="inset_uKQm"><div><code>player<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="https://developer.roblox.com/en-us/api-reference/class/Player" target="_blank" rel="noopener noreferrer">Player<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound" style="color:gray;vertical-align:middle;margin-left:2px"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></code><code>,</code><span class="inlineDescription_G7Er">-- <span>
+<p>Target player</p>
+</span></span></div><div><code>event<!-- -->: </code><code class="blue_P4bS">string</code><code>,</code><span class="inlineDescription_G7Er">-- <span>
+<p>Event name</p>
+</span></span></div><div><code>...<!-- -->: </code><code class="blue_P4bS">any</code><span class="inlineDescription_G7Er">-- <span>
+<p>Arguments to send</p>
+</span></span></div></div><code>) → </code><code>(</code><code>)</code></div><div>
+<p>
+  Fires an event to a specific player (batched).
+  Event will be sent on the next Heartbeat.
+</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="FireNow"><code style="text-decoration:none">FireNow</code><a href="#FireNow" class="hash-link" aria-label="Direct link to FireNow" title="Direct link to FireNow">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/vadymcap/NetLink/blob/main/src/NetLink/init.luau#L133"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Server<!-- -->:</code><code class="green_DgR4">FireNow</code><code>(</code><div class="inset_uKQm"><div><code>player<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="https://developer.roblox.com/en-us/api-reference/class/Player" target="_blank" rel="noopener noreferrer">Player<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound" style="color:gray;vertical-align:middle;margin-left:2px"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></code><code>,</code><span class="inlineDescription_G7Er">-- <span>
+<p>Target player</p>
+</span></span></div><div><code>event<!-- -->: </code><code class="blue_P4bS">string</code><code>,</code><span class="inlineDescription_G7Er">-- <span>
+<p>Event name</p>
+</span></span></div><div><code>...<!-- -->: </code><code class="blue_P4bS">any</code><span class="inlineDescription_G7Er">-- <span>
+<p>Arguments to send</p>
+</span></span></div></div><code>) → </code><code>(</code><code>)</code></div><div>
+<p>
+  Fires an event to a specific player immediately (unbatched).
+  Event is sent instantly without waiting for Heartbeat.
+</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="FireAll"><code style="text-decoration:none">FireAll</code><a href="#FireAll" class="hash-link" aria-label="Direct link to FireAll" title="Direct link to FireAll">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/vadymcap/NetLink/blob/main/src/NetLink/init.luau#L148"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Server<!-- -->:</code><code class="green_DgR4">FireAll</code><code>(</code><div class="inset_uKQm"><div><code>event<!-- -->: </code><code class="blue_P4bS">string</code><code>,</code><span class="inlineDescription_G7Er">-- <span>
+<p>Event name</p>
+</span></span></div><div><code>...<!-- -->: </code><code class="blue_P4bS">any</code><span class="inlineDescription_G7Er">-- <span>
+<p>Arguments to send</p>
+</span></span></div></div><code>) → </code><code>(</code><code>)</code></div><div>
+<p>Fires an event to all connected players (batched).</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="FireAllExcept"><code style="text-decoration:none">FireAllExcept</code><a href="#FireAllExcept" class="hash-link" aria-label="Direct link to FireAllExcept" title="Direct link to FireAllExcept">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/vadymcap/NetLink/blob/main/src/NetLink/init.luau#L166"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Server<!-- -->:</code><code class="green_DgR4">FireAllExcept</code><code>(</code><div class="inset_uKQm"><div><code>except<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="https://developer.roblox.com/en-us/api-reference/class/Player" target="_blank" rel="noopener noreferrer">Player<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound" style="color:gray;vertical-align:middle;margin-left:2px"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></code><code>,</code><span class="inlineDescription_G7Er">-- <span>
+<p>Player to exclude</p>
+</span></span></div><div><code>event<!-- -->: </code><code class="blue_P4bS">string</code><code>,</code><span class="inlineDescription_G7Er">-- <span>
+<p>Event name</p>
+</span></span></div><div><code>...<!-- -->: </code><code class="blue_P4bS">any</code><span class="inlineDescription_G7Er">-- <span>
+<p>Arguments to send</p>
+</span></span></div></div><code>) → </code><code>(</code><code>)</code></div><div>
+<p>Fires an event to all players except one (batched).</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="FireList"><code style="text-decoration:none">FireList</code><a href="#FireList" class="hash-link" aria-label="Direct link to FireList" title="Direct link to FireList">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/vadymcap/NetLink/blob/main/src/NetLink/init.luau#L186"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Server<!-- -->:</code><code class="green_DgR4">FireList</code><code>(</code><div class="inset_uKQm"><div><code>playerList<!-- -->: </code><code class="purple_ieR2">{</code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="https://developer.roblox.com/en-us/api-reference/class/Player" target="_blank" rel="noopener noreferrer">Player<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound" style="color:gray;vertical-align:middle;margin-left:2px"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></code><code class="purple_ieR2">}</code><code>,</code><span class="inlineDescription_G7Er">-- <span>
+<p>Array of target players</p>
+</span></span></div><div><code>event<!-- -->: </code><code class="blue_P4bS">string</code><code>,</code><span class="inlineDescription_G7Er">-- <span>
+<p>Event name</p>
+</span></span></div><div><code>...<!-- -->: </code><code class="blue_P4bS">any</code><span class="inlineDescription_G7Er">-- <span>
+<p>Arguments to send</p>
+</span></span></div></div><code>) → </code><code>(</code><code>)</code></div><div>
+<p>Fires an event to a specific list of players (batched).</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="FireWithFilter"><code style="text-decoration:none">FireWithFilter</code><a href="#FireWithFilter" class="hash-link" aria-label="Direct link to FireWithFilter" title="Direct link to FireWithFilter">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/vadymcap/NetLink/blob/main/src/NetLink/init.luau#L204"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Server<!-- -->:</code><code class="green_DgR4">FireWithFilter</code><code>(</code><div class="inset_uKQm"><div><code>filter<!-- -->: </code><code class="purple_ieR2">(</code><code>player<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="https://developer.roblox.com/en-us/api-reference/class/Player" target="_blank" rel="noopener noreferrer">Player<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound" style="color:gray;vertical-align:middle;margin-left:2px"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></code><code class="purple_ieR2">)</code><code class="purple_ieR2"> → </code><code class="blue_P4bS">boolean</code><code>,</code><span class="inlineDescription_G7Er">-- <span>
+<p>Filter function</p>
+</span></span></div><div><code>event<!-- -->: </code><code class="blue_P4bS">string</code><code>,</code><span class="inlineDescription_G7Er">-- <span>
+<p>Event name</p>
+</span></span></div><div><code>...<!-- -->: </code><code class="blue_P4bS">any</code><span class="inlineDescription_G7Er">-- <span>
+<p>Arguments to send</p>
+</span></span></div></div><code>) → </code><code>(</code><code>)</code></div><div>
+<p>Fires an event to players matching a filter function (batched).</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="On"><code style="text-decoration:none">On</code><a href="#On" class="hash-link" aria-label="Direct link to On" title="Direct link to On">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/vadymcap/NetLink/blob/main/src/NetLink/init.luau#L223"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Server<!-- -->:</code><code class="green_DgR4">On</code><code>(</code><div class="inset_uKQm"><div><code>events<!-- -->: </code><code class="purple_ieR2">{</code><span><code>[</code><code class="blue_P4bS">string</code><code>]</code></span><code>: </code><code class="green_DgR4">(</code><div class="inset_uKQm"><code>player<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="https://developer.roblox.com/en-us/api-reference/class/Player" target="_blank" rel="noopener noreferrer">Player<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound" style="color:gray;vertical-align:middle;margin-left:2px"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></code><code class="green_DgR4">,</code></div><div class="inset_uKQm"><code class="blue_P4bS">...any</code></div><code class="green_DgR4">)</code><code class="green_DgR4"> → </code><code class="green_DgR4">(</code><code class="green_DgR4">)</code><code class="purple_ieR2">}</code><code class="op_lSLc"> | </code><code class="blue_P4bS">string</code><code>,</code><span class="inlineDescription_G7Er">-- <span>
+<p>Event name or table of events</p>
+</span></span></div><div><code>callback<!-- -->: </code><code class="purple_ieR2">(</code><code class="green_DgR4">(</code><div class="inset_uKQm"><code>player<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="https://developer.roblox.com/en-us/api-reference/class/Player" target="_blank" rel="noopener noreferrer">Player<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound" style="color:gray;vertical-align:middle;margin-left:2px"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></code><code class="green_DgR4">,</code></div><div class="inset_uKQm"><code class="blue_P4bS">...any</code></div><code class="green_DgR4">)</code><code class="green_DgR4"> → </code><code class="green_DgR4">(</code><code class="green_DgR4">)</code><code class="purple_ieR2">)</code><code class="blue_P4bS">?</code><span class="inlineDescription_G7Er">-- <span>
+<p>Callback function (if events is a string)</p>
+</span></span></div></div><code>) → </code><code>(</code><code>)</code></div><div>
+<p>Registers event listener(s) for incoming client events.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="WithRateLimit"><code style="text-decoration:none">WithRateLimit</code><a href="#WithRateLimit" class="hash-link" aria-label="Direct link to WithRateLimit" title="Direct link to WithRateLimit">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/vadymcap/NetLink/blob/main/src/NetLink/init.luau#L273"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Server<!-- -->:</code><code class="green_DgR4">WithRateLimit</code><code>(</code><div class="inset_uKQm"><div><code>config<!-- -->: </code><code class="blue_P4bS">RateLimitConfig</code><code class="op_lSLc"> | </code><code class="blue_P4bS">&quot;strict&quot;</code><code class="op_lSLc"> | </code><code class="blue_P4bS">&quot;normal&quot;</code><code class="op_lSLc"> | </code><code class="blue_P4bS">&quot;relaxed&quot;</code><code class="op_lSLc"> | </code><code class="blue_P4bS">&quot;burst&quot;</code><span class="inlineDescription_G7Er">-- <span>
+<p>Rate limit configuration or preset</p>
+</span></span></div></div><code>) → </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/NetLink/api/Server">Server</a></code><span class="inlineDescription_G7Er">-- <span>
+<p>Returns self for chaining</p>
+</span></span></div><div>
+<p>Enables rate limiting for this namespace.</p>
+<p>Example:</p>
+<pre class="language-lua"><code class="language-lua"><span class="token keyword">local</span> Combat <span class="token operator">=</span> NetLink<span class="token punctuation">.</span><span class="token function">Server</span><span class="token punctuation">(</span><span class="token string">"Combat"</span><span class="token punctuation">)</span>
+	<span class="token punctuation">:</span><span class="token function">WithRateLimit</span><span class="token punctuation">(</span><span class="token string">"strict"</span><span class="token punctuation">)</span>
+	<span class="token punctuation">:</span><span class="token function">WithRateLimit</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+		MaxCalls <span class="token operator">=</span> <span class="token number">5</span><span class="token punctuation">,</span>
+		TimeWindow <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">,</span>
+		Strategy <span class="token operator">=</span> <span class="token string">"sliding"</span><span class="token punctuation">,</span>
+		OnExceeded <span class="token operator">=</span> <span class="token keyword">function</span><span class="token punctuation">(</span>key<span class="token punctuation">,</span> attempts<span class="token punctuation">)</span>
+			<span class="token keyword">local</span> player <span class="token operator">=</span> Players<span class="token punctuation">:</span><span class="token function">GetPlayerByUserId</span><span class="token punctuation">(</span><span class="token function">tonumber</span><span class="token punctuation">(</span>key<span class="token punctuation">)</span><span class="token punctuation">)</span>
+			<span class="token keyword">if</span> player <span class="token keyword">and</span> attempts <span class="token operator">></span> <span class="token number">20</span> <span class="token keyword">then</span>
+				player<span class="token punctuation">:</span><span class="token function">Kick</span><span class="token punctuation">(</span><span class="token string">"Rate limit abuse"</span><span class="token punctuation">)</span>
+			<span class="token keyword">end</span>
+		<span class="token keyword">end</span>
+	<span class="token punctuation">}</span><span class="token punctuation">)</span>
+</code></pre>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="GetRateLimiter"><code style="text-decoration:none">GetRateLimiter</code><a href="#GetRateLimiter" class="hash-link" aria-label="Direct link to GetRateLimiter" title="Direct link to GetRateLimiter">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/vadymcap/NetLink/blob/main/src/NetLink/init.luau#L297"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Server<!-- -->:</code><code class="green_DgR4">GetRateLimiter</code><code>(</code><code>) → </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/NetLink/api/RateLimit">RateLimit?</a></code></div><div>
+<p>Gets the rate limiter for this namespace (if enabled).</p>
+<p>Example:</p>
+<pre class="language-lua"><code class="language-lua"><span class="token keyword">local</span> limiter <span class="token operator">=</span> Combat<span class="token punctuation">:</span><span class="token function">GetRateLimiter</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token keyword">if</span> limiter <span class="token keyword">then</span>
+	<span class="token keyword">local</span> stats <span class="token operator">=</span> limiter<span class="token punctuation">:</span><span class="token function">GetStats</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+	<span class="token function">print</span><span class="token punctuation">(</span>`Block rate<span class="token punctuation">:</span> <span class="token punctuation">{</span>stats<span class="token punctuation">.</span>BlockRate <span class="token operator">*</span> <span class="token number">100</span><span class="token punctuation">}</span><span class="token operator">%</span>`<span class="token punctuation">)</span>
+<span class="token keyword">end</span>
+</code></pre>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="ResetRateLimit"><code style="text-decoration:none">ResetRateLimit</code><a href="#ResetRateLimit" class="hash-link" aria-label="Direct link to ResetRateLimit" title="Direct link to ResetRateLimit">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/vadymcap/NetLink/blob/main/src/NetLink/init.luau#L312"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Server<!-- -->:</code><code class="green_DgR4">ResetRateLimit</code><code>(</code><code>player<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="https://developer.roblox.com/en-us/api-reference/class/Player" target="_blank" rel="noopener noreferrer">Player<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound" style="color:gray;vertical-align:middle;margin-left:2px"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></code><code>) → </code><code>(</code><code>)</code></div><div>
+<p>Resets rate limit data for a specific player.</p>
+<p>Example:</p>
+<pre class="language-lua"><code class="language-lua">Combat<span class="token punctuation">:</span><span class="token function">ResetRateLimit</span><span class="token punctuation">(</span>player<span class="token punctuation">)</span>
+</code></pre>
+</div></div></article></div><details><summary>Show raw api</summary><pre style="max-width:100%;white-space:pre-wrap">{
+    &quot;functions&quot;: [
+        {
+            &quot;name&quot;: &quot;Fire&quot;,
+            &quot;desc&quot;: &quot;Fires an event to a specific player (batched).\nEvent will be sent on the next Heartbeat.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;player&quot;,
+                    &quot;desc&quot;: &quot;Target player&quot;,
+                    &quot;lua_type&quot;: &quot;Player&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;event&quot;,
+                    &quot;desc&quot;: &quot;Event name&quot;,
+                    &quot;lua_type&quot;: &quot;string&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;...&quot;,
+                    &quot;desc&quot;: &quot;Arguments to send&quot;,
+                    &quot;lua_type&quot;: &quot;any&quot;
+                }
+            ],
+            &quot;returns&quot;: [],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 116,
+                &quot;path&quot;: &quot;src/NetLink/init.luau&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;FireNow&quot;,
+            &quot;desc&quot;: &quot;Fires an event to a specific player immediately (unbatched).\nEvent is sent instantly without waiting for Heartbeat.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;player&quot;,
+                    &quot;desc&quot;: &quot;Target player&quot;,
+                    &quot;lua_type&quot;: &quot;Player&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;event&quot;,
+                    &quot;desc&quot;: &quot;Event name&quot;,
+                    &quot;lua_type&quot;: &quot;string&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;...&quot;,
+                    &quot;desc&quot;: &quot;Arguments to send&quot;,
+                    &quot;lua_type&quot;: &quot;any&quot;
+                }
+            ],
+            &quot;returns&quot;: [],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 133,
+                &quot;path&quot;: &quot;src/NetLink/init.luau&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;FireAll&quot;,
+            &quot;desc&quot;: &quot;Fires an event to all connected players (batched).&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;event&quot;,
+                    &quot;desc&quot;: &quot;Event name&quot;,
+                    &quot;lua_type&quot;: &quot;string&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;...&quot;,
+                    &quot;desc&quot;: &quot;Arguments to send&quot;,
+                    &quot;lua_type&quot;: &quot;any&quot;
+                }
+            ],
+            &quot;returns&quot;: [],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 148,
+                &quot;path&quot;: &quot;src/NetLink/init.luau&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;FireAllExcept&quot;,
+            &quot;desc&quot;: &quot;Fires an event to all players except one (batched).&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;except&quot;,
+                    &quot;desc&quot;: &quot;Player to exclude&quot;,
+                    &quot;lua_type&quot;: &quot;Player&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;event&quot;,
+                    &quot;desc&quot;: &quot;Event name&quot;,
+                    &quot;lua_type&quot;: &quot;string&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;...&quot;,
+                    &quot;desc&quot;: &quot;Arguments to send&quot;,
+                    &quot;lua_type&quot;: &quot;any&quot;
+                }
+            ],
+            &quot;returns&quot;: [],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 166,
+                &quot;path&quot;: &quot;src/NetLink/init.luau&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;FireList&quot;,
+            &quot;desc&quot;: &quot;Fires an event to a specific list of players (batched).&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;playerList&quot;,
+                    &quot;desc&quot;: &quot;Array of target players&quot;,
+                    &quot;lua_type&quot;: &quot;{Player}&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;event&quot;,
+                    &quot;desc&quot;: &quot;Event name&quot;,
+                    &quot;lua_type&quot;: &quot;string&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;...&quot;,
+                    &quot;desc&quot;: &quot;Arguments to send&quot;,
+                    &quot;lua_type&quot;: &quot;any&quot;
+                }
+            ],
+            &quot;returns&quot;: [],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 186,
+                &quot;path&quot;: &quot;src/NetLink/init.luau&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;FireWithFilter&quot;,
+            &quot;desc&quot;: &quot;Fires an event to players matching a filter function (batched).&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;filter&quot;,
+                    &quot;desc&quot;: &quot;Filter function&quot;,
+                    &quot;lua_type&quot;: &quot;(player: Player) -&gt; boolean&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;event&quot;,
+                    &quot;desc&quot;: &quot;Event name&quot;,
+                    &quot;lua_type&quot;: &quot;string&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;...&quot;,
+                    &quot;desc&quot;: &quot;Arguments to send&quot;,
+                    &quot;lua_type&quot;: &quot;any&quot;
+                }
+            ],
+            &quot;returns&quot;: [],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 204,
+                &quot;path&quot;: &quot;src/NetLink/init.luau&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;On&quot;,
+            &quot;desc&quot;: &quot;Registers event listener(s) for incoming client events.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;events&quot;,
+                    &quot;desc&quot;: &quot;Event name or table of events&quot;,
+                    &quot;lua_type&quot;: &quot;{[string]: (player: Player, ...any) -&gt; ()} | string&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;callback&quot;,
+                    &quot;desc&quot;: &quot;Callback function (if events is a string)&quot;,
+                    &quot;lua_type&quot;: &quot;((player: Player, ...any) -&gt; ())?&quot;
+                }
+            ],
+            &quot;returns&quot;: [],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 223,
+                &quot;path&quot;: &quot;src/NetLink/init.luau&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;WithRateLimit&quot;,
+            &quot;desc&quot;: &quot;Enables rate limiting for this namespace.\n\n\nExample:\n```lua\nlocal Combat = NetLink.Server(\&quot;Combat\&quot;)\n\t:WithRateLimit(\&quot;strict\&quot;)\n\t:WithRateLimit({\n\t\tMaxCalls = 5,\n\t\tTimeWindow = 1,\n\t\tStrategy = \&quot;sliding\&quot;,\n\t\tOnExceeded = function(key, attempts)\n\t\t\tlocal player = Players:GetPlayerByUserId(tonumber(key))\n\t\t\tif player and attempts &gt; 20 then\n\t\t\t\tplayer:Kick(\&quot;Rate limit abuse\&quot;)\n\t\t\tend\n\t\tend\n\t})\n```&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;config&quot;,
+                    &quot;desc&quot;: &quot;Rate limit configuration or preset&quot;,
+                    &quot;lua_type&quot;: &quot;RateLimitConfig | \&quot;strict\&quot; | \&quot;normal\&quot; | \&quot;relaxed\&quot; | \&quot;burst\&quot;&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;Returns self for chaining&quot;,
+                    &quot;lua_type&quot;: &quot;Server&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 273,
+                &quot;path&quot;: &quot;src/NetLink/init.luau&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;GetRateLimiter&quot;,
+            &quot;desc&quot;: &quot;Gets the rate limiter for this namespace (if enabled).\n\n\nExample:\n```lua\nlocal limiter = Combat:GetRateLimiter()\nif limiter then\n\tlocal stats = limiter:GetStats()\n\tprint(`Block rate: {stats.BlockRate * 100}%`)\nend\n```&quot;,
+            &quot;params&quot;: [],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;RateLimit?&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 297,
+                &quot;path&quot;: &quot;src/NetLink/init.luau&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;ResetRateLimit&quot;,
+            &quot;desc&quot;: &quot;Resets rate limit data for a specific player.\n\n\nExample:\n```lua\nCombat:ResetRateLimit(player)\n```&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;player&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Player&quot;
+                }
+            ],
+            &quot;returns&quot;: [],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 312,
+                &quot;path&quot;: &quot;src/NetLink/init.luau&quot;
+            }
+        }
+    ],
+    &quot;properties&quot;: [],
+    &quot;types&quot;: [],
+    &quot;name&quot;: &quot;Server&quot;,
+    &quot;desc&quot;: &quot;Server-side namespace for handling client communication.&quot;,
+    &quot;source&quot;: {
+        &quot;line&quot;: 94,
+        &quot;path&quot;: &quot;src/NetLink/init.luau&quot;
+    }
+}</pre></details></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#functions" class="table-of-contents__link toc-highlight">Functions</a><ul><li><a href="#Fire" class="table-of-contents__link toc-highlight">:Fire</a></li><li><a href="#FireAll" class="table-of-contents__link toc-highlight">:FireAll</a></li><li><a href="#FireAllExcept" class="table-of-contents__link toc-highlight">:FireAllExcept</a></li><li><a href="#FireList" class="table-of-contents__link toc-highlight">:FireList</a></li><li><a href="#FireNow" class="table-of-contents__link toc-highlight">:FireNow</a></li><li><a href="#FireWithFilter" class="table-of-contents__link toc-highlight">:FireWithFilter</a></li><li><a href="#GetRateLimiter" class="table-of-contents__link toc-highlight">:GetRateLimiter</a></li><li><a href="#On" class="table-of-contents__link toc-highlight">:On</a></li><li><a href="#ResetRateLimit" class="table-of-contents__link toc-highlight">:ResetRateLimit</a></li><li><a href="#WithRateLimit" class="table-of-contents__link toc-highlight">:WithRateLimit</a></li></ul></li></ul></div></div></div></div></main></div></div><footer class="footer footer--dark"><div class="container container-fluid"><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2025 vadymcap. Built with Moonwave and Docusaurus</div></div></div></footer></div>
+</body>
+</html>
