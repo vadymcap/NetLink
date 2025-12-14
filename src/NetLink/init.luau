@@ -37,7 +37,12 @@ local Event = require(script.Event)
 local ServerEvent = require(script.ServerEvent)
 local ClientEvent = require(script.ClientEvent)
 
+local Extensions = script.Extensions
+local RateLimit = require(Extensions.RateLimit)
+
 type Promise<T...> = Promise.PromiseType<T...>
+type RateLimit = RateLimit.RateLimit
+type RateLimitConfig = RateLimit.RateLimitConfig
 
 --[=[
 	Gets a cached event ID if available.
@@ -90,7 +95,8 @@ Server.__index = Server
 function Server.new(name: string, unreliable: boolean?)
 	return setmetatable({ 
 		Name = name,
-		Unreliable = unreliable or false
+		Unreliable = unreliable or false,
+		_rateLimiter = nil :: RateLimit?,
 	}, Server)
 end
 
