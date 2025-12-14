@@ -221,8 +221,85 @@ function Server:On(
 		end
 	else
 		getEventId(self, events):tap(function(eventId: string)
-			ServerEvent.Listen(eventId, callback :: any)
+			ServerEvent.Listen(eventId, function(player : Player, ...)
+				-- Rate limit check
+				if self._rateLimiter then
+					local allowed, retryAfter = self._rateLimiter:Check(tostring(player.UserId))
+					if not allowed then
+						warn(`[NetLink] Rate limit exceeded for {player.Name} on event {events}. Retry after {retryAfter}s`)
+						return
+					end
+				end
+				
+				callback(player, ...)
+			end)
 		end)
+	end
+end
+
+--[=[
+	Enables rate limiting for this namespace.
+	
+	@param config RateLimitConfig | "strict" | "normal" | "relaxed" | "burst" -- Rate limit configuration or preset
+	@return Server -- Returns self for chaining
+	
+	Example:
+```lua
+	local Combat = NetLink.Server("Combat")
+		:WithRateLimit("strict")
+		:WithRateLimit({
+			MaxCalls = 5,
+			TimeWindow = 1,
+			Strategy = "sliding",
+			OnExceeded = function(key, attempts)
+				local player = Players:GetPlayerByUserId(tonumber(key))
+				if player and attempts > 20 then
+					player:Kick("Rate limit abuse")
+				end
+			end
+		})
+```
+]=]
+function Server:WithRateLimit(config: RateLimitConfig | "strict" | "normal" | "relaxed" | "burst"): Server
+	if type(config) == "string" then
+		config = RateLimit.Preset(config)
+	end
+	
+	self._rateLimiter = RateLimit.new(config)
+	return self
+end
+
+--[=[
+	Gets the rate limiter for this namespace (if enabled).
+	
+	@return RateLimit?
+	
+	Example:
+```lua
+	local limiter = Combat:GetRateLimiter()
+	if limiter then
+		local stats = limiter:GetStats()
+		print(`Block rate: {stats.BlockRate * 100}%`)
+	end
+```
+]=]
+function Server:GetRateLimiter(): RateLimit?
+	return self._rateLimiter
+end
+
+--[=[
+	Resets rate limit data for a specific player.
+	
+	@param player Player
+	
+	Example:
+```lua
+	Combat:ResetRateLimit(player)
+```
+]=]
+function Server:ResetRateLimit(player: Player)
+	if self._rateLimiter then
+		self._rateLimiter:Reset(tostring(player.UserId))
 	end
 end
 

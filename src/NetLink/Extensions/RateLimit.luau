@@ -138,6 +138,10 @@ function RateLimit:Check(key: string): (boolean, number?)
 			self._onExceeded(key, self._stats.BlockedByKey[key])
 		end
 	end
+
+    if retryAfter then
+        retryAfter = tonumber(string.format("%.2f", retryAfter))
+    end
 	
 	return allowed, retryAfter
 end
