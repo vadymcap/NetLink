@@ -1,12 +1,12 @@
 --!strict
---[[
+--[=[
 	@class NetLink
 	High-performance networking library for Roblox.
 	
 	Provides namespace-based event system with batching, type safety,
 	and flexible communication patterns. Supports both reliable (RemoteEvent)
 	and unreliable (UnreliableRemoteEvent) communication.
-]]
+]=]
 
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
@@ -45,6 +45,7 @@ type RateLimit = RateLimit.RateLimit
 type RateLimitConfig = RateLimit.RateLimitConfig
 
 --[=[
+	@within NetLink
 	Gets a cached event ID if available.
 	
 	@private
@@ -58,6 +59,7 @@ local function getCachedEventId(namespace: Server | Client, event: string): stri
 end
 
 --[=[
+	@within NetLink
 	Retrieves or generates an event ID for the given namespace and event name.
 	
 	@private
@@ -103,6 +105,7 @@ end
 export type Server = typeof(Server.new(...))
 
 --[=[
+	@within Server
 	Fires an event to a specific player (batched).
 	Event will be sent on the next Heartbeat.
 	
@@ -119,6 +122,7 @@ function Server:Fire(player: Player, event: string, ...: any)
 end
 
 --[=[
+	@within Server
 	Fires an event to a specific player immediately (unbatched).
 	Event is sent instantly without waiting for Heartbeat.
 	
@@ -135,6 +139,7 @@ function Server:FireNow(player: Player, event: string, ...: any)
 end
 
 --[=[
+	@within Server
 	Fires an event to all connected players (batched).
 	
 	@param event string -- Event name
@@ -151,6 +156,7 @@ function Server:FireAll(event: string, ...: any)
 end
 
 --[=[
+	@within Server
 	Fires an event to all players except one (batched).
 	
 	@param except Player -- Player to exclude
@@ -170,6 +176,7 @@ function Server:FireAllExcept(except: Player, event: string, ...: any)
 end
 
 --[=[
+	@within Server
 	Fires an event to a specific list of players (batched).
 	
 	@param playerList {Player} -- Array of target players
@@ -187,6 +194,7 @@ function Server:FireList(playerList: { Player }, event: string, ...: any)
 end
 
 --[=[
+	@within Server
 	Fires an event to players matching a filter function (batched).
 	
 	@param filter (player: Player) -> boolean -- Filter function
@@ -206,6 +214,7 @@ function Server:FireWithFilter(filter: (player: Player) -> boolean, event: strin
 end
 
 --[=[
+	@within Server
 	Registers event listener(s) for incoming client events.
 	
 	@param events {[string]: (player: Player, ...any) -> ()} | string -- Event name or table of events
@@ -238,13 +247,14 @@ function Server:On(
 end
 
 --[=[
+	@within Server
 	Enables rate limiting for this namespace.
 	
 	@param config RateLimitConfig | "strict" | "normal" | "relaxed" | "burst" -- Rate limit configuration or preset
 	@return Server -- Returns self for chaining
 	
 	Example:
-```lua
+	```lua
 	local Combat = NetLink.Server("Combat")
 		:WithRateLimit("strict")
 		:WithRateLimit({
@@ -258,7 +268,7 @@ end
 				end
 			end
 		})
-```
+	```
 ]=]
 function Server:WithRateLimit(config: RateLimitConfig | "strict" | "normal" | "relaxed" | "burst"): Server
 	if type(config) == "string" then
@@ -270,32 +280,34 @@ function Server:WithRateLimit(config: RateLimitConfig | "strict" | "normal" | "r
 end
 
 --[=[
+	@within Server
 	Gets the rate limiter for this namespace (if enabled).
 	
 	@return RateLimit?
 	
 	Example:
-```lua
+	```lua
 	local limiter = Combat:GetRateLimiter()
 	if limiter then
 		local stats = limiter:GetStats()
 		print(`Block rate: {stats.BlockRate * 100}%`)
 	end
-```
+	```
 ]=]
 function Server:GetRateLimiter(): RateLimit?
 	return self._rateLimiter
 end
 
 --[=[
+	@within Server
 	Resets rate limit data for a specific player.
 	
 	@param player Player
 	
 	Example:
-```lua
+	```lua
 	Combat:ResetRateLimit(player)
-```
+	```
 ]=]
 function Server:ResetRateLimit(player: Player)
 	if self._rateLimiter then
@@ -320,6 +332,7 @@ end
 export type Client = typeof(Client.new(...))
 
 --[=[
+	@within Client
 	Fires an event to the server (batched).
 	Event will be sent on the next Heartbeat.
 	
@@ -335,6 +348,7 @@ function Client:Fire(event: string, ...: any)
 end
 
 --[=[
+	@within Client
 	Fires an event to the server immediately (unbatched).
 	Event is sent instantly without waiting for Heartbeat.
 	
@@ -350,6 +364,7 @@ function Client:FireNow(event: string, ...: any)
 end
 
 --[=[
+	@within Client
 	Calls a server function and returns a Promise with the result.
 	
 	@param event string -- Event name
@@ -365,6 +380,7 @@ function Client:Call(event: string, ...: any): Promise<...any>
 end
 
 --[=[
+	@within Client
 	Registers event listener(s) for incoming server events.
 	
 	@param events {[string]: (...any) -> ()} | string -- Event name or table of events
@@ -390,6 +406,7 @@ local NetLink = {
 }
 
 --[=[
+	@within NetLink
 	Creates or retrieves a server namespace.
 	
 	@param name string -- Namespace identifier
@@ -408,6 +425,7 @@ function NetLink.Server(name: string, unreliable: boolean?): Server
 end
 
 --[=[
+	@within NetLink
 	Creates or retrieves a client namespace.
 	
 	@param name string -- Namespace identifier

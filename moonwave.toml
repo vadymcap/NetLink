@@ -1,0 +1,29 @@
+title = "NetLink"  # From Git
+gitRepoUrl = "https://github.com/vadymcap/NetLink" # From Git
+
+gitSourceBranch = "main"
+changelog = true
+classOrder = []
+
+[docusaurus]
+onBrokenLinks = "throw"
+onBrokenMarkdownLinks = "warn"
+
+# From git:
+organizationName = "Vadym Maist"
+projectName = "NetLink"
+url = "https://AuthorName.github.io"
+baseUrl = "/NetLink"
+tagline = "Cap"
+
+[footer]
+style = "dark"
+copyright = "Copyright © 2025 vadymcap. Built with Moonwave and Docusaurus"
+
+[[navbar.items]]
+href = "https://discord.gg/gQRfWpTsEE"
+label = "Discord"
+position = "right"
+
+[[classOrder]]
+classes = ["NetLink", "Server", "Client", "RateLimit"]

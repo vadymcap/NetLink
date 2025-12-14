@@ -4,6 +4,7 @@
 	Handles server-side event batching and dispatching.
 	
 	@private
+	@ignore
 ]=]
 
 local RunService = game:GetService("RunService")
@@ -22,6 +23,7 @@ local OutgoingMap = {} :: { [Player]: { Fire: EventMap?, Call: CallList? } }
 local UnreliableOutgoingMap = {} :: { [Player]: { Fire: EventMap?, Call: CallList? } }
 
 --[=[
+	@within ServerEvent
 	Retrieves or creates an outbound map for a player.
 	
 	@private
@@ -48,6 +50,7 @@ local function getOutboundMap(player: Player, kind: "Fire", unreliable:boolean?)
 end
 
 --[=[
+	@within ServerEvent
 	Handles incoming Fire events from clients.
 	
 	@private
@@ -73,6 +76,7 @@ local function handleIncomingFire(player: Player, fireSection: EventMap)
 end
 
 --[=[
+	@within ServerEvent
 	Handles incoming Call events from clients.
 	
 	@private
@@ -123,6 +127,7 @@ local function handleIncomingCall(player: Player, callSection: EventMap)
 end
 
 --[=[
+	@within ServerEvent
 	Main handler for incoming events from clients.
 	
 	@private
@@ -145,6 +150,7 @@ local function OnServerEvent(player: Player, fireSection: EventMap?, callSection
 end
 
 --[=[
+	@within ServerEvent
 	Processes and sends all queued outgoing events.
 	
 	@private
@@ -167,6 +173,7 @@ local function handleOutgoing()
 end
 
 --[=[
+	@within ServerEvent
 	Queues an event to be sent to a player (batched).
 	
 	@param player Player
@@ -183,6 +190,7 @@ local function Fire(player: Player, eventId: string, args: { any }, unreliable: 
 end
 
 --[=[
+	@within ServerEvent
 	Sends an event to a player immediately (unbatched).
 	
 	@param player Player
@@ -198,6 +206,7 @@ local function FireNow(player: Player, eventId: string, args: { any }, unreliabl
 end
 
 --[=[
+	@within ServerEvent
 	Registers a listener for an event.
 	
 	@param eventId string
@@ -208,6 +217,7 @@ local function Listen(eventId: string, callback: (player: Player, ...any) -> ())
 end
 
 --[=[
+	@within ServerEvent
 	Initializes the server event system.
 ]=]
 local function Start()

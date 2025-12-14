@@ -4,6 +4,7 @@
 	Optimized thread spawning utility.
 	
 	@private
+	@ignore
 ]=]
 
 local freeThreads: { thread } = {}
@@ -20,6 +21,7 @@ local function yielder()
 end
 
 --[=[
+	@within Spawn
 	Spawns a function in a reusable thread for better performance.
 	
 	@param callback (...any) -> () -- Function to execute

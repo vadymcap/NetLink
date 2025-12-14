@@ -48,6 +48,7 @@ end
 	an instance of this object.
 
 	@class Error
+	@ignore
 ]=]
 local Error
 do
@@ -197,6 +198,7 @@ end
 	@interface Status
 	@tag enum
 	@within Promise
+	@ignore
 	.Started "Started" -- The Promise is executing, and not settled yet.
 	.Resolved "Resolved" -- The Promise finished successfully.
 	.Rejected "Rejected" -- The Promise was rejected.
@@ -207,6 +209,7 @@ end
 	@within Promise
 	@readonly
 	@tag enums
+	@ignore
 	A table containing all members of the `Status` enum, e.g., `Promise.Status.Resolved`.
 ]=]
 --[=[
@@ -215,6 +218,7 @@ end
 	or if an error has occurred (known as *rejecting*).
 
 	@class Promise
+	@ignore
 	@__index prototype
 ]=]
 local Promise = {

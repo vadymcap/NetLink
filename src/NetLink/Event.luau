@@ -4,6 +4,7 @@
 	Manages event ID generation and synchronization.
 	
 	@private
+	@ignore
 ]=]
 
 local RunService = game:GetService("RunService")
@@ -18,9 +19,11 @@ local NextShared = 0
 local NextUnique = 0
 
 --[=[
+	@within Event
 	Converts a number to a compact unsigned integer string.
 	
 	@private
+	@ignore
 	@param n number
 	@return string
 ]=]
@@ -29,6 +32,7 @@ local function uInt(n: number): string
 end
 
 --[=[
+	@within Event
 	Generates a unique ID for client-side operations.
 	
 	@return string
@@ -44,6 +48,7 @@ local function Unique(): string
 end
 
 --[=[
+	@within Event
 	Generates or retrieves a shared event ID synchronized across server and client.
 	
 	@param name string -- Event name

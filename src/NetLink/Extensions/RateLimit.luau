@@ -1,5 +1,5 @@
 --!strict
---[[
+--[=[
 	@class RateLimit
 	Advanced rate limiting system for preventing spam and abuse.
 	
@@ -14,7 +14,7 @@
 	- Automatic cleanup of old data
 	- Customizable penalties
 	- Built-in statistics tracking
-]]
+]=]
 
 local RateLimit = {}
 RateLimit.__index = RateLimit
@@ -39,13 +39,14 @@ export type RateLimitStats = {
 }
 
 --[=[
+	@within RateLimit
 	Creates a new RateLimit instance.
 	
 	@param config RateLimitConfig -- Configuration options
 	@return RateLimit
 	
 	Example:
-```lua
+	```lua
 	local limiter = RateLimit.new({
 		MaxCalls = 10,
 		TimeWindow = 1,
@@ -54,7 +55,7 @@ export type RateLimitStats = {
 			warn(`Player {key} exceeded rate limit ({attempts} attempts)`)
 		end
 	})
-```
+	```
 ]=]
 function RateLimit.new(config: RateLimitConfig): RateLimit
 	assert(config.MaxCalls > 0, "MaxCalls must be positive")
@@ -93,6 +94,7 @@ function RateLimit.new(config: RateLimitConfig): RateLimit
 end
 
 --[=[
+	@within RateLimit
 	Checks if a key can perform an action based on rate limits.
 	
 	@param key string -- Unique identifier (usually player.UserId)
@@ -100,12 +102,12 @@ end
 	@return number? -- Time until next available slot (if blocked)
 	
 	Example:
-```lua
+	```lua
 	local allowed, retryAfter = limiter:Check(tostring(player.UserId))
 	if not allowed then
 		player:Kick(`Rate limit exceeded. Retry after {retryAfter} seconds`)
 	end
-```
+	```
 ]=]
 function RateLimit:Check(key: string): (boolean, number?)
 	self._stats.TotalChecks += 1
@@ -139,14 +141,15 @@ function RateLimit:Check(key: string): (boolean, number?)
 		end
 	end
 
-    if retryAfter then
-        retryAfter = tonumber(string.format("%.2f", retryAfter))
-    end
+	if retryAfter then
+		retryAfter = tonumber(string.format("%.2f", retryAfter))
+	end
 	
 	return allowed, retryAfter
 end
 
 --[=[
+	@within RateLimit
 	Fixed window rate limiting strategy.
 	Simple and memory efficient, but can allow bursts at window boundaries.
 	
@@ -182,6 +185,7 @@ function RateLimit:_checkFixed(key: string): (boolean, number?)
 end
 
 --[=[
+	@within RateLimit
 	Sliding window rate limiting strategy.
 	More accurate than fixed window, tracks individual timestamps.
 	
@@ -216,6 +220,7 @@ function RateLimit:_checkSliding(key: string): (boolean, number?)
 end
 
 --[=[
+	@within RateLimit
 	Token bucket rate limiting strategy.
 	Allows bursts up to BurstSize, refills at RefillRate tokens/second.
 	
@@ -251,6 +256,7 @@ function RateLimit:_checkTokenBucket(key: string): (boolean, number?)
 end
 
 --[=[
+	@within RateLimit
 	Leaky bucket rate limiting strategy.
 	Smooths out request rates, enforces steady flow.
 	
@@ -286,14 +292,15 @@ function RateLimit:_checkLeakyBucket(key: string): (boolean, number?)
 end
 
 --[=[
+	@within RateLimit
 	Resets rate limit data for a specific key.
 	
 	@param key string -- Key to reset
 	
 	Example:
-```lua
+	```lua
 	limiter:Reset(tostring(player.UserId))
-```
+	```
 ]=]
 function RateLimit:Reset(key: string)
 	self._fixedWindows[key] = nil
@@ -304,12 +311,13 @@ function RateLimit:Reset(key: string)
 end
 
 --[=[
+	@within RateLimit
 	Resets all rate limit data.
 	
 	Example:
-```lua
+	```lua
 	limiter:ResetAll()
-```
+	```
 ]=]
 function RateLimit:ResetAll()
 	table.clear(self._fixedWindows)
@@ -320,16 +328,17 @@ function RateLimit:ResetAll()
 end
 
 --[=[
+	@within RateLimit
 	Gets the current number of remaining calls for a key.
 	
 	@param key string
 	@return number -- Remaining calls available
 	
 	Example:
-```lua
+	```lua
 	local remaining = limiter:GetRemaining(tostring(player.UserId))
 	print(`You have {remaining} requests remaining`)
-```
+	```
 ]=]
 function RateLimit:GetRemaining(key: string): number
 	if self._strategy == "fixed" then
@@ -383,19 +392,20 @@ function RateLimit:GetRemaining(key: string): number
 end
 
 --[=[
+	@within RateLimit
 	Gets comprehensive statistics about rate limiting.
 	
 	@return RateLimitStats
 	
 	Example:
-```lua
+	```lua
 	local stats = limiter:GetStats()
 	print(`Block rate: {stats.BlockRate * 100}%`)
 	print("Most blocked players:")
 	for _, entry in stats.MostBlockedKeys do
 		print(`  {entry.Key}: {entry.Count} blocks`)
 	end
-```
+	```
 ]=]
 function RateLimit:GetStats(): RateLimitStats
 	local blockRate = 0
@@ -429,6 +439,7 @@ function RateLimit:GetStats(): RateLimitStats
 end
 
 --[=[
+	@within RateLimit
 	Adds tokens to a token bucket (for token bucket strategy only).
 	Useful for granting extra capacity to VIP players.
 	
@@ -436,12 +447,12 @@ end
 	@param amount number
 	
 	Example:
-```lua
+	```lua
 	-- Give VIP player extra tokens
 	if player:GetAttribute("IsVIP") then
 		limiter:AddTokens(tostring(player.UserId), 10)
 	end
-```
+	```
 ]=]
 function RateLimit:AddTokens(key: string, amount: number)
 	if self._strategy ~= "token" then
@@ -461,19 +472,20 @@ function RateLimit:AddTokens(key: string, amount: number)
 end
 
 --[=[
+	@within RateLimit
 	Adjusts the maximum calls limit dynamically.
 	
 	@param newMax number
 	
 	Example:
-```lua
+	```lua
 	-- Increase limit during off-peak hours
 	if hour >= 2 and hour <= 6 then
 		limiter:SetMaxCalls(20)
 	else
 		limiter:SetMaxCalls(10)
 	end
-```
+	```
 ]=]
 function RateLimit:SetMaxCalls(newMax: number)
 	assert(newMax > 0, "MaxCalls must be positive")
@@ -481,6 +493,7 @@ function RateLimit:SetMaxCalls(newMax: number)
 end
 
 --[=[
+	@within RateLimit
 	Performs cleanup of old data to prevent memory leaks.
 	
 	@private
@@ -531,16 +544,17 @@ function RateLimit:_performCleanup()
 end
 
 --[=[
+	@within RateLimit
 	Creates a preset configuration for common use cases.
 	
 	@param preset "strict" | "normal" | "relaxed" | "burst"
 	@return RateLimitConfig
 	
 	Example:
-```lua
+	```lua
 	local strictLimiter = RateLimit.new(RateLimit.Preset("strict"))
 	local relaxedLimiter = RateLimit.new(RateLimit.Preset("relaxed"))
-```
+	```
 ]=]
 function RateLimit.Preset(preset: "strict" | "normal" | "relaxed" | "burst"): RateLimitConfig
 	if preset == "strict" then

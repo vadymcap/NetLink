@@ -5,6 +5,7 @@
 	Supports both reliable and unreliable delivery.
 	
 	@private
+	@ignore
 ]=]
 
 local RunService = game:GetService("RunService")
@@ -41,6 +42,7 @@ local CALL_MAP: EventMap = {}
 local CALL_COUNT = 0
 
 --[=[
+	@within ClientEvent
 	Handles incoming Fire events from server.
 	
 	@private
@@ -65,6 +67,7 @@ local function handleIncomingFire(fireSection: EventMap)
 end
 
 --[=[
+	@within ClientEvent
 	Handles resolution or rejection of Call promises.
 	
 	@private
@@ -95,6 +98,7 @@ local function handleCallResumption(callSection: { { any } })
 end
 
 --[=[
+	@within ClientEvent
 	Main handler for incoming events from server.
 	
 	@private
@@ -116,6 +120,7 @@ local function OnClientEvent(fireSection: EventMap?, callSection: { { any } }?)
 end
 
 --[=[
+	@within ClientEvent
 	Processes and sends all queued outgoing events.
 	
 	@private
@@ -145,6 +150,7 @@ local function handleOutgoing()
 end
 
 --[=[
+	@within ClientEvent
 	Queues an event to be sent to server (batched).
 	
 	@param eventId string
@@ -172,6 +178,7 @@ local function Fire(eventId: string, args: { any }, unreliable: boolean?)
 end
 
 --[=[
+	@within ClientEvent
 	Sends an event to server immediately (unbatched).
 	
 	@param eventId string
@@ -189,6 +196,7 @@ local function FireNow(eventId: string, args: { any }, unreliable: boolean?)
 end
 
 --[=[
+	@within ClientEvent
 	Calls a server function and returns a Promise.
 	
 	@param eventId string
@@ -216,6 +224,7 @@ local function Call(eventId: string, args: { any }): Promise<...any>
 end
 
 --[=[
+	@within ClientEvent
 	Registers a listener for an event.
 	
 	@param eventId string
@@ -226,6 +235,7 @@ local function Listen(eventId: string, callback: (...any) -> ())
 end
 
 --[=[
+	@within ClientEvent
 	Initializes the client event system.
 ]=]
 local function Start()
