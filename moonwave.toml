@@ -10,7 +10,7 @@ onBrokenLinks = "throw"
 onBrokenMarkdownLinks = "warn"
 
 # From git:
-organizationName = "Vadym Maist"
+organizationName = "Vaist"
 projectName = "NetLink"
 url = "https://AuthorName.github.io"
 baseUrl = "/NetLink"
