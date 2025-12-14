@@ -8,12 +8,12 @@
 local Promise = {}
 Promise.__index = Promise
 
-export type Promise = {
-	andThen: (self: Promise, successHandler: (T...) -> ...any, failureHandler: ((any) -> ...any)?) -> ProximityPromptService,
-	catch: (self: Promise, failureHandler: (any) -> ...any) -> Promise,
-	tap: (self: Promise, tapHandler: (T...) -> ()) -> Promise,
-	await: (self: Promise) -> (boolean, T...),
-	expect: (self: Promise) -> T...,
+export type Promise<T...> = {
+	andThen: (self: Promise<T...>, successHandler: (T...) -> ...any, failureHandler: ((any) -> ...any)?) -> Promise<...any>,
+	catch: (self: Promise<T...>, failureHandler: (any) -> ...any) -> Promise<T...>,
+	tap: (self: Promise<T...>, tapHandler: (T...) -> ()) -> Promise<T...>,
+	await: (self: Promise<T...>) -> (boolean, T...),
+	expect: (self: Promise<T...>) -> T...,
 }
 
 --[=[
@@ -22,7 +22,7 @@ export type Promise = {
 	@param callback (resolve: (T...) -> (), reject: (reason: any) -> ()) -> () -- Executor function
 	@return Promise<T...>
 ]=]
-function Promise.new(callback: (resolve: (T...) -> (), reject: (reason: any) -> ()) -> ()): Promise
+function Promise.new<T...>(callback: (resolve: (T...) -> (), reject: (reason: any) -> ()) -> ()): Promise<T...>
 	local self = setmetatable({
 		_status = "pending",
 		_value = nil,
@@ -68,7 +68,7 @@ end
 	@param value T... -- Value(s) to resolve with
 	@return Promise<T...>
 ]=]
-function Promise.resolved(...: T...): Promise
+function Promise.resolve<T...>(...: T...): Promise<T...>
 	return Promise.new(function(resolve)
 		resolve(...)
 	end)
@@ -80,7 +80,7 @@ end
 	@param reason any -- Rejection reason
 	@return Promise<never>
 ]=]
-function Promise.reject(reason: any): Promise
+function Promise.reject(reason: any): Promise<...never>
 	return Promise.new(function(_, reject)
 		reject(reason)
 	end)
@@ -96,7 +96,7 @@ end
 function Promise:andThen<T..., U...>(
 	successHandler: (T...) -> U...,
 	failureHandler: ((any) -> U...)?
-): Promise
+): Promise<U...>
 	return Promise.new(function(resolve, reject)
 		if self._status == "resolved" then
 			local success, result = pcall(successHandler, table.unpack(self._value))
@@ -148,7 +148,7 @@ end
 	@param failureHandler (any) -> ...any -- Called when Promise rejects
 	@return Promise<T...>
 ]=]
-function Promise:catch(failureHandler: (any) -> T...): Promise
+function Promise:catch<T...>(failureHandler: (any) -> T...): Promise<T...>
 	return self:andThen(function(...)
 		return ...
 	end, failureHandler)
@@ -161,7 +161,7 @@ end
 	@param tapHandler (T...) -> () -- Function to execute on success
 	@return Promise<T...> -- Returns self for chaining
 ]=]
-function Promise:tap(tapHandler: (T...) -> ()): Promise
+function Promise:tap<T...>(tapHandler: (T...) -> ()): Promise<T...>
 	if self._status == "resolved" then
 		task.spawn(tapHandler, table.unpack(self._value))
 	elseif self._status == "pending" then
@@ -177,7 +177,7 @@ end
 	@return boolean -- Whether the Promise resolved successfully
 	@return T... -- The resolved value(s) or rejection reason
 ]=]
-function Promise:await(): (boolean, T...)
+function Promise:await<T...>(): (boolean, T...)
 	if self._status == "resolved" then
 		return true, table.unpack(self._value)
 	elseif self._status == "rejected" then
@@ -204,7 +204,7 @@ end
 	@return T... -- The resolved value(s)
 	@error Throws if Promise rejects
 ]=]
-function Promise:expect(): T...
+function Promise:expect<T...>(): T...
 	local success, result = self:await()
 	if not success then
 		error(result, 2)
@@ -212,4 +212,5 @@ function Promise:expect(): T...
 	return result
 end
 
+export type PromiseType = typeof(Promise.new(...))
 return Promise

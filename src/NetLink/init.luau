@@ -4,7 +4,8 @@
 	High-performance networking library for Roblox.
 	
 	Provides namespace-based event system with batching, type safety,
-	and flexible communication patterns.
+	and flexible communication patterns. Supports both reliable (RemoteEvent)
+	and unreliable (UnreliableRemoteEvent) communication.
 ]]
 
 local Players = game:GetService("Players")
@@ -16,33 +17,23 @@ local Event = require(script.Event)
 local ServerEvent = require(script.ServerEvent)
 local ClientEvent = require(script.ClientEvent)
 
-export type Promise = {
-	andThen: (self: Promise, successHandler: (T...) -> ...any, failureHandler: ((any) -> ...any)?) -> ProximityPromptService,
-	catch: (self: Promise, failureHandler: (any) -> ...any) -> Promise,
-	tap: (self: Promise, tapHandler: (T...) -> ()) -> Promise,
-	await: (self: Promise) -> (boolean, T...),
-	expect: (self: Promise) -> T...,
-}
+type Promise<T...> = Promise.PromiseType<T...>
 
-local Remote = ReplicatedStorage:FindFirstChild("NetLinkEvent") :: RemoteEvent?
-local UnreliableRemote = ReplicatedStorage:FindFirstChild("UnreliableNetLinkEvent") :: UnreliableRemoteEvent?
+local ReliableRemote = ReplicatedStorage:FindFirstChild("NetLinkEvent") :: RemoteEvent?
+local UnreliableRemote = ReplicatedStorage:FindFirstChild("NetLinkEventUnreliable") :: UnreliableRemoteEvent?
 
--- Setup RemoteEvent
+-- Setup RemoteEvent (Reliable)
 if RunService:IsServer() then
-	if not ReplicatedStorage:FindFirstChild("NetLinkEvent") then
-		UnreliableRemote = Instance.new("RemoteEvent")
-		UnreliableRemote.Name = "NetLinkEvent"
-		UnreliableRemote.Parent = ReplicatedStorage
-	end
-
-	if not ReplicatedStorage:FindFirstChild("UnreliableNetLinkEvent") then
-		UnreliableRemote = Instance.new("UnreliableRemoteEvent")
-		UnreliableRemote.Name = "UnreliableNetLinkEvent"
-		UnreliableRemote.Parent = ReplicatedStorage
-	end
-elseif not Remote then
-	Remote = ReplicatedStorage:WaitForChild("NetLinkEvent") :: RemoteEvent
-	UnreliableRemote = ReplicatedStorage:WaitForChild("UnreliableNetLinkEvent") :: UnreliableRemoteEvent
+	ReliableRemote = Instance.new("RemoteEvent")
+	ReliableRemote.Name = "NetLinkEvent"
+	ReliableRemote.Parent = ReplicatedStorage
+	
+	UnreliableRemote = Instance.new("UnreliableRemoteEvent")
+	UnreliableRemote.Name = "NetLinkEventUnreliable"
+	UnreliableRemote.Parent = ReplicatedStorage
+elseif not ReliableRemote then
+	ReliableRemote = ReplicatedStorage:WaitForChild("NetLinkEvent") :: RemoteEvent
+	UnreliableRemote = ReplicatedStorage:WaitForChild("NetLinkEventUnreliable") :: UnreliableRemoteEvent
 end
 
 local cachedEventIds: { [string]: string } = {}
@@ -95,8 +86,11 @@ end
 local Server = {}
 Server.__index = Server
 
-function Server.new(name: string)
-	return setmetatable({ Name = name }, Server)
+function Server.new(name: string, unreliable: boolean?)
+	return setmetatable({ 
+		Name = name,
+		Unreliable = unreliable or false
+	}, Server)
 end
 
 export type Server = typeof(Server.new(...))
@@ -113,7 +107,7 @@ function Server:Fire(player: Player, event: string, ...: any)
 	local args = { ... }
 
 	getEventId(self, event):tap(function(eventId: string)
-		ServerEvent.Fire(player, eventId, args)
+		ServerEvent.Fire(player, eventId, args, self.Unreliable)
 	end)
 end
 
@@ -129,7 +123,7 @@ function Server:FireNow(player: Player, event: string, ...: any)
 	local args = { ... }
 
 	getEventId(self, event):tap(function(eventId: string)
-		ServerEvent.FireNow(player, eventId, args)
+		ServerEvent.FireNow(player, eventId, args, self.Unreliable)
 	end)
 end
 
@@ -144,7 +138,7 @@ function Server:FireAll(event: string, ...: any)
 
 	getEventId(self, event):tap(function(eventId: string)
 		for _, player in Players:GetPlayers() do
-			ServerEvent.Fire(player, eventId, args)
+			ServerEvent.Fire(player, eventId, args, self.Unreliable)
 		end
 	end)
 end
@@ -162,7 +156,7 @@ function Server:FireAllExcept(except: Player, event: string, ...: any)
 	getEventId(self, event):tap(function(eventId: string)
 		for _, player in Players:GetPlayers() do
 			if player ~= except then
-				ServerEvent.Fire(player, eventId, args)
+				ServerEvent.Fire(player, eventId, args, self.Unreliable)
 			end
 		end
 	end)
@@ -180,7 +174,7 @@ function Server:FireList(playerList: { Player }, event: string, ...: any)
 
 	getEventId(self, event):tap(function(eventId: string)
 		for _, player in playerList do
-			ServerEvent.Fire(player, eventId, args)
+			ServerEvent.Fire(player, eventId, args, self.Unreliable)
 		end
 	end)
 end
@@ -198,7 +192,7 @@ function Server:FireWithFilter(filter: (player: Player) -> boolean, event: strin
 	getEventId(self, event):tap(function(eventId: string)
 		for _, player in Players:GetPlayers() do
 			if filter(player) then
-				ServerEvent.Fire(player, eventId, args)
+				ServerEvent.Fire(player, eventId, args, self.Unreliable)
 			end
 		end
 	end)
@@ -232,8 +226,11 @@ end
 local Client = {}
 Client.__index = Client
 
-function Client.new(name: string)
-	return setmetatable({ Name = name }, Client)
+function Client.new(name: string, unreliable: boolean?)
+	return setmetatable({ 
+		Name = name,
+		Unreliable = unreliable or false
+	}, Client)
 end
 
 export type Client = typeof(Client.new(...))
@@ -249,7 +246,7 @@ function Client:Fire(event: string, ...: any)
 	local args = { ... }
 
 	getEventId(self, event):tap(function(eventId: string)
-		ClientEvent.Fire(eventId, args)
+		ClientEvent.Fire(eventId, args, self.Unreliable)
 	end)
 end
 
@@ -264,7 +261,7 @@ function Client:FireNow(event: string, ...: any)
 	local args = { ... }
 
 	getEventId(self, event):tap(function(eventId: string)
-		ClientEvent.FireNow(eventId, args)
+		ClientEvent.FireNow(eventId, args, self.Unreliable)
 	end)
 end
 
@@ -312,30 +309,36 @@ local NetLink = {
 	Creates or retrieves a server namespace.
 	
 	@param name string -- Namespace identifier
+	@param unreliable boolean? -- Whether to use UnreliableRemoteEvent (default: false)
 	@return Server
 ]=]
-function NetLink.Server(name: string): Server
+function NetLink.Server(name: string, unreliable: boolean?): Server
 	assert(RunService:IsServer(), "NetLink.Server can only be used on the server.")
 
-	if not ServerMap[name] then
-		ServerMap[name] = Server.new(name)
+	local key = name .. (if unreliable then "_unreliable" else "_reliable")
+	
+	if not ServerMap[key] then
+		ServerMap[key] = Server.new(name, unreliable)
 	end
-	return ServerMap[name]
+	return ServerMap[key]
 end
 
 --[=[
 	Creates or retrieves a client namespace.
 	
 	@param name string -- Namespace identifier
+	@param unreliable boolean? -- Whether to use UnreliableRemoteEvent (default: false)
 	@return Client
 ]=]
-function NetLink.Client(name: string): Client
+function NetLink.Client(name: string, unreliable: boolean?): Client
 	assert(RunService:IsClient(), "NetLink.Client can only be used on the client.")
 
-	if not ClientMap[name] then
-		ClientMap[name] = Client.new(name)
+	local key = name .. (if unreliable then "_unreliable" else "_reliable")
+	
+	if not ClientMap[key] then
+		ClientMap[key] = Client.new(name, unreliable)
 	end
-	return ClientMap[name]
+	return ClientMap[key]
 end
 
 return NetLink

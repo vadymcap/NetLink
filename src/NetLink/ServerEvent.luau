@@ -12,12 +12,14 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Spawn = require(script.Parent.Internal.Spawn)
 
 local Remote = ReplicatedStorage:WaitForChild("NetLinkEvent") :: RemoteEvent
+local UnreliableRemote = ReplicatedStorage:WaitForChild("NetLinkEventUnreliable") :: UnreliableRemoteEvent
 
 type CallList = { { any } }
 type EventMap = { [string]: { { any } } }
 
 local ListenerMap = {} :: { [string]: (player: Player, ...any) -> () }
 local OutgoingMap = {} :: { [Player]: { Fire: EventMap?, Call: CallList? } }
+local UnreliableOutgoingMap = {} :: { [Player]: { Fire: EventMap?, Call: CallList? } }
 
 --[=[
 	Retrieves or creates an outbound map for a player.
@@ -27,11 +29,16 @@ local OutgoingMap = {} :: { [Player]: { Fire: EventMap?, Call: CallList? } }
 	@param kind "Fire" | "Call"
 	@return EventMap | CallList
 ]=]
-local function getOutboundMap(player: Player, kind: "Fire"): EventMap
+local function getOutboundMap(player: Player, kind: "Fire", unreliable:boolean?): EventMap
 	local map = OutgoingMap[player]
 	if not map then
 		map = {}
-		OutgoingMap[player] = map
+
+		if unreliable then
+			UnreliableOutgoingMap[player] = map
+		else
+			OutgoingMap[player] = map
+		end
 	end
 
 	local specific = map[kind] or {}
@@ -149,7 +156,12 @@ local function handleOutgoing()
 		Remote:FireClient(player, outbound.Fire, outbound.Call)
 	end
 
+	for player, outbound in UnreliableOutgoingMap do
+		UnreliableRemote:FireClient(player, outbound.Fire, outbound.Call)
+	end
+
 	table.clear(OutgoingMap)
+	table.clear(UnreliableOutgoingMap)
 
 	debug.profileend()
 end
@@ -161,8 +173,8 @@ end
 	@param eventId string
 	@param args {any}
 ]=]
-local function Fire(player: Player, eventId: string, args: { any })
-	local map = getOutboundMap(player, "Fire")
+local function Fire(player: Player, eventId: string, args: { any }, unreliable: boolean?)
+	local map = getOutboundMap(player, "Fire", unreliable)
 	if not map[eventId] then
 		map[eventId] = {}
 	end
@@ -177,8 +189,12 @@ end
 	@param eventId string
 	@param args {any}
 ]=]
-local function FireNow(player: Player, eventId: string, args: { any })
-	Remote:FireClient(player, { [eventId] = { args } })
+local function FireNow(player: Player, eventId: string, args: { any }, unreliable: boolean?)
+	if unreliable then
+		UnreliableRemote:FireClient(player, { [eventId] = { args } })
+	else
+		Remote:FireClient(player, { [eventId] = { args } })
+	end
 end
 
 --[=[
@@ -198,6 +214,7 @@ local function Start()
 	debug.setmemorycategory("NetLink.ServerEvent.Start")
 
 	Remote.OnServerEvent:Connect(OnServerEvent)
+	UnreliableRemote.OnClientEvent:Connect(OnServerEvent)
 	RunService.Heartbeat:Connect(handleOutgoing)
 end
 

@@ -1,0 +1,13 @@
+{
+    "name": "NetLink",
+    "tree": {
+        "$className": "DataModel",
+        "ReplicatedStorage": {
+            "$className": "ReplicatedStorage",
+            "Util": {
+                "$path": "src"
+            }
+        }
+    }
+  }
+  
